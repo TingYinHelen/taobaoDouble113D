@@ -1,5 +1,5 @@
 var camera, scene, renderer;
-
+    console.log('test')
 			var texture_placeholder,
 			isUserInteracting = false,
 			onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -30,14 +30,12 @@ var camera, scene, renderer;
 				context.fillRect( 0, 0, texture_placeholder.width, texture_placeholder.height );
 
 				var materials = [
-
 					loadTexture( 'static/textures/px.jpg' ), // right
 					loadTexture( 'static/textures/nx.jpg' ), // left
 					loadTexture( 'static/textures/py.jpg' ), // top
 					loadTexture( 'static/textures/ny.jpg' ), // bottom
 					loadTexture( 'static/textures/pz.jpg' ), // back
 					loadTexture( 'static/textures/nz.jpg' ) // front
-
 				];
 
 				mesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300, 7, 7, 7 ), materials );

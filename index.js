@@ -1,5 +1,4 @@
 var camera, scene, renderer;
-    console.log('test')
 			var texture_placeholder,
 			isUserInteracting = false,
 			onMouseDownMouseX = 0, onMouseDownMouseY = 0,
@@ -17,17 +16,9 @@ var camera, scene, renderer;
 
 				container = document.getElementById( 'container' );
 
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 200, 1100 );
 
 				scene = new THREE.Scene();
-
-				texture_placeholder = document.createElement( 'canvas' );
-				texture_placeholder.width = 128;
-				texture_placeholder.height = 128;
-
-				var context = texture_placeholder.getContext( '2d' );
-				context.fillStyle = 'rgb( 200, 200, 200 )';
-				context.fillRect( 0, 0, texture_placeholder.width, texture_placeholder.height );
 
 				var materials = [
 					loadTexture( 'static/textures/px.jpg' ), // right
@@ -39,17 +30,17 @@ var camera, scene, renderer;
 				];
 
 				mesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300, 7, 7, 7 ), materials );
-				mesh.scale.x = - 1;
+        mesh.scale.x = -1;
 				scene.add( mesh );
 
-				for ( var i = 0, l = mesh.geometry.vertices.length; i < l; i ++ ) {
+				// for ( var i = 0, l = mesh.geometry.vertices.length; i < l; i ++ ) {
 
-					var vertex = mesh.geometry.vertices[ i ];
+				// 	var vertex = mesh.geometry.vertices[ i ];
 
-					vertex.normalize();
-					vertex.multiplyScalar( 550 );
+				// 	vertex.normalize();
+				// 	vertex.multiplyScalar( 550 );
 
-				}
+				// }
 
 				renderer = new THREE.CanvasRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -65,33 +56,25 @@ var camera, scene, renderer;
 				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 
 				//
-
-				window.addEventListener( 'resize', onWindowResize, false );
-
-			}
-
-			function onWindowResize() {
-
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( window.innerWidth, window.innerHeight );
+        drawAxes(scene);
+				// window.addEventListener( 'resize', onWindowResize, false );
 
 			}
+
+			// function onWindowResize() {
+
+			// 	camera.aspect = window.innerWidth / window.innerHeight;
+			// 	camera.updateProjectionMatrix();
+
+			// 	renderer.setSize( window.innerWidth, window.innerHeight );
+
+			// }
 
 			function loadTexture( path ) {
 
-				var texture = new THREE.Texture( texture_placeholder );
-				var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5 } );
-
-				var image = new Image();
-				image.onload = function () {
-
-					texture.image = this;
-					texture.needsUpdate = true;
-
-				};
-				image.src = path;
+        // var texture = new THREE.Texture( texture_placeholder );
+        var texture = new THREE.ImageUtils.loadTexture(path)
+        var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5 } );
 
 				return material;
 
@@ -185,10 +168,48 @@ var camera, scene, renderer;
 				target.x = 500 * Math.sin( phi ) * Math.cos( theta );
 				target.y = 500 * Math.cos( phi );
 				target.z = 500 * Math.sin( phi ) * Math.sin( theta );
+        //将target的向量给camera，然后让camera反向
+				// camera.position.copy( target ).negate();
+        // camera.position.copy( target )
+        camera.position = new THREE.Vector3(0,0,0)
+        camera.lookAt( target );
 
-				camera.position.copy( target ).negate();
-				camera.lookAt( target );
+        // camera.lookAt(new THREE.Vector3(0,0,0))
 
 				renderer.render( scene, camera );
 
-			}
+      }
+
+      function drawAxes(scene) {
+        // x-axis
+        var xGeo = new THREE.Geometry();
+        xGeo.vertices.push(new THREE.Vector3(0, 0, 0));
+        xGeo.vertices.push(new THREE.Vector3(3000, 0, 0));
+        var xMat = new THREE.LineBasicMaterial({
+            color: 0xff0000
+        });
+        var xAxis = new THREE.Line(xGeo, xMat);
+        scene.add(xAxis);
+
+        // y-axis
+        var yGeo = new THREE.Geometry();
+        yGeo.vertices.push(new THREE.Vector3(0, 0, 0));
+        yGeo.vertices.push(new THREE.Vector3(0, 3000, 0));
+        var yMat = new THREE.LineBasicMaterial({
+            // color: 0x00ff00
+            color: 0xff0000
+        });
+        var yAxis = new THREE.Line(yGeo, yMat);
+        scene.add(yAxis);
+
+        // z-axis
+        var zGeo = new THREE.Geometry();
+        zGeo.vertices.push(new THREE.Vector3(0, 0, 0));
+        zGeo.vertices.push(new THREE.Vector3(0, 0, 3000));
+        var zMat = new THREE.LineBasicMaterial({
+            // color: 0x00ccff
+            color: 0xff0000
+        });
+        var zAxis = new THREE.Line(zGeo, zMat);
+        scene.add(zAxis);
+    }
